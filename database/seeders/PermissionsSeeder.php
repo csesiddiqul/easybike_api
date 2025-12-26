@@ -30,12 +30,20 @@ class PermissionsSeeder extends Seeder
 
             // Permission
             ['name' => 'View Permission', 'slug' => 'view_permission', 'group' => 'Permission'],
-            // ['name' => 'Create Permission', 'slug' => 'create_permission', 'group' => 'Permission'],
-            // ['name' => 'Edit Permission', 'slug' => 'edit_permission', 'group' => 'Permission'],
-            // ['name' => 'Delete Permission', 'slug' => 'delete_permission', 'group' => 'Permission'],
-            // ['name' => 'Assign Permission', 'slug' => 'assign_permission', 'group' => 'Permission'],
+            ['name' => 'Create Permission', 'slug' => 'create_permission', 'group' => 'Permission'],
+            ['name' => 'Edit Permission', 'slug' => 'edit_permission', 'group' => 'Permission'],
+            ['name' => 'Delete Permission', 'slug' => 'delete_permission', 'group' => 'Permission'],
+            ['name' => 'Assign Permission', 'slug' => 'assign_permission', 'group' => 'Permission'],
 
+            ['name' => 'Create Owner', 'slug' => 'create_owner', 'group' => 'Owner Management'],
+            ['name' => 'Edit Owner', 'slug' => 'edit_owner', 'group' => 'Owner Management'],
+            ['name' => 'Delete Owner', 'slug' => 'delete_owner', 'group' => 'Owner Management'],
+            ['name' => 'View Owner', 'slug' => 'view_owner', 'group' => 'Owner Management'],
 
+            ['name' => 'Create vehicle', 'slug' => 'create_vehicle', 'group' => 'vehicle Management'],
+            ['name' => 'Edit vehicle', 'slug' => 'edit_vehicle', 'group' => 'vehicle Management'],
+            ['name' => 'Delete vehicle', 'slug' => 'delete_vehicle', 'group' => 'vehicle Management'],
+            ['name' => 'View vehicle', 'slug' => 'view_vehicle', 'group' => 'vehicle Management'],
 
 
 
@@ -68,7 +76,7 @@ class PermissionsSeeder extends Seeder
         // Assign all permissions to the Admin role
         $adminRoleId = DB::table('roles')->where('name', 'Super Admin')->value('id');
         $permissions = DB::table('permissions')->pluck('id')->toArray();
-        
+
         DB::table('role_permissions')->insert(
             array_map(function ($permissionId) use ($adminRoleId) {
                 return ['role_id' => $adminRoleId, 'permission_id' => $permissionId, 'created_at' => now(), 'updated_at' => now()];
