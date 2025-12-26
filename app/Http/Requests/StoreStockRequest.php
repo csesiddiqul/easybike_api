@@ -37,5 +37,5 @@ class StoreStockRequest extends FormRequest
      * @param \Illuminate\Validation\Validator $validator
      * @return void
      */
-   
+
 }

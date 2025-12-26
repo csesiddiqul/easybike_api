@@ -3,6 +3,7 @@
 use App\Http\Controllers\AlertMessageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FindAddressController;
+use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\WebsiteSettingController;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +51,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // TODO: 3
     // stock
     Route::apiResource('stocks', StockController::class);
+
+    //Owner
+    // Route::apiResource('owners', OwnerController::class);
+    Route::apiResource('owners', OwnerController::class)->middleware([
+        'index' => 'permissions:view_owner',
+        'show' => 'permissions:view_owner',
+        'store' => 'permissions:create_owner',
+        'update' => 'permissions:edit_owner',
+        'destroy' => 'permissions:delete_owner',
+    ]);
+
 
     Route::post('stock-reports', [StockController::class, 'stockreport']);
 
