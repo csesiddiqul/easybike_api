@@ -6,6 +6,8 @@ use App\Http\Controllers\FindAddressController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\WebsiteSettingController;
+use App\Http\Controllers\FiscalYearController;
+use App\Http\Controllers\DriverController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -65,11 +67,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('stock-reports', [StockController::class, 'stockreport']);
 
-
-
-    // TODO: 5
     // alert messages
     Route::get('get-alert-messages', [AlertMessageController::class, 'index']);
+
+
+
+    // =========== Apurbo Route ===========//
+    Route::apiResource('fiscal-years', FiscalYearController::class)->only(['index', 'store', 'show']);
+    Route::patch('fiscal-years/{fiscalYear}/activate',[FiscalYearController::class, 'activate']);
+    Route::patch('fiscal-years/{fiscalYear}/correct',[FiscalYearController::class, 'correct']);
+    Route::apiResource('drivers', DriverController::class);
+
+
+
 });
 
 
