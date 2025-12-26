@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FiscalYear;
+use App\Http\Resources\FiscalYearResource;
 use App\Http\Requests\StoreFiscalYearRequest;
 use App\Http\Requests\CorrectFiscalYearRequest;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class FiscalYearController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $fiscalYears,
+            'data'    => FiscalYearResource::collection($fiscalYears),
         ]);
     }
 
@@ -48,7 +49,8 @@ class FiscalYearController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Fiscal year created successfully',
-            'data'    => $fiscalYear,
+            'data'    => new FiscalYearResource($fiscalYear),
+
         ], 201);
     }
 
@@ -59,7 +61,7 @@ class FiscalYearController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data'    => $fiscalYear,
+            'data'    => new FiscalYearResource($fiscalYear),
         ]);
     }
 
@@ -88,7 +90,7 @@ class FiscalYearController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Fiscal year activated successfully.',
-            'data'    => $fiscalYear->fresh(),
+            'data'    => new FiscalYearResource($fiscalYear->fresh()),
         ]);
     }
 
@@ -114,7 +116,7 @@ class FiscalYearController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Fiscal year corrected successfully.',
-            'data'    => $fiscalYear->fresh(),
+            'data'    => new FiscalYearResource($fiscalYear->fresh()),
         ]);
     }
 

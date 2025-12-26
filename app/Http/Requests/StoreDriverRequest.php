@@ -11,18 +11,48 @@ class StoreDriverRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check()
+            && auth()->user()->role
+            && auth()->user()->role->name === 'Super Admin';
     }
 
+
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * Validation rules
      */
     public function rules(): array
     {
         return [
-            //
+
+            /* ======================
+               USER INFO
+            ====================== */
+            'name'  => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20', 'unique:users,phone'],
+            'email' => ['nullable', 'email', 'unique:users,email'],
+
+            /* ======================
+               DRIVER PROFILE
+            ====================== */
+            'driver_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'nid' => ['required', 'string', 'unique:drivers,nid'],
+
+            'years_of_experience' => ['required', 'integer', 'min:0', 'max:60'],
+
+            'present_address'   => ['required', 'string'],
+            'permanent_address' => ['required', 'string'],
+        ];
+    }
+
+    /**
+     * Custom error messages
+     */
+    public function messages(): array
+    {
+        return [
+            'phone.unique' => 'This phone number is already registered.',
+            'email.unique' => 'This email address is already in use.',
+            'nid.unique'   => 'This NID is already registered as a driver.',
         ];
     }
 }

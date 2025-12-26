@@ -6,6 +6,7 @@ use App\Http\Controllers\FindAddressController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\FiscalYearController;
+use App\Http\Controllers\DriverController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -60,10 +61,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // =========== Apurbo Route ===========//
-    Route::Resource('fiscal-years', FiscalYearController::class)->only(['index', 'store', 'show']);
+    Route::apiResource('fiscal-years', FiscalYearController::class)->only(['index', 'store', 'show']);
     Route::patch('fiscal-years/{fiscalYear}/activate',[FiscalYearController::class, 'activate']);
     Route::patch('fiscal-years/{fiscalYear}/correct',[FiscalYearController::class, 'correct']);
-
+    Route::apiResource('drivers', DriverController::class);
 
 
 

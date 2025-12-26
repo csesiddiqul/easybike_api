@@ -88,4 +88,9 @@ class User extends Authenticatable
     {
         return $this->role->permissions->contains('slug', $permission);
     }
+
+    public function driver()
+    {
+        return $this->hasOne(Driver::class);
+    }
 }

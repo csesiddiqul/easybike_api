@@ -11,10 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('drivers', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+    Schema::create('drivers', function (Blueprint $table) {
+        $table->id();
+
+        $table->foreignId('user_id')
+            ->constrained('users')
+            ->cascadeOnDelete();
+
+        $table->string('registration_number')->unique();
+        $table->string('driver_image')->nullable();
+        $table->string('nid')->unique();
+
+        $table->date('registration_date');
+        $table->integer('years_of_experience')->default(0);
+        $table->text('present_address');
+        $table->text('permanent_address');
+        $table->enum('status', ['pending', 'active', 'expired','inactive','suspended'])->default('pending');
+
+        $table->timestamps();
+    });
+
     }
 
     /**

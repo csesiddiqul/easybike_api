@@ -35,6 +35,22 @@ class PermissionsSeeder extends Seeder
             // ['name' => 'Delete Permission', 'slug' => 'delete_permission', 'group' => 'Permission'],
             // ['name' => 'Assign Permission', 'slug' => 'assign_permission', 'group' => 'Permission'],
 
+            // =====================
+            // Fiscal Year Management
+            // =====================
+            ['name' => 'View Fiscal Year', 'slug' => 'view_fiscal_year', 'group' => 'Fiscal Year'],
+            ['name' => 'Create Fiscal Year', 'slug' => 'create_fiscal_year', 'group' => 'Fiscal Year'],
+            ['name' => 'Correct Fiscal Year', 'slug' => 'correct_fiscal_year', 'group' => 'Fiscal Year'],
+            ['name' => 'Activate Fiscal Year', 'slug' => 'activate_fiscal_year', 'group' => 'Fiscal Year'],
+
+            // =====================
+            // Driver Management
+            // =====================
+            ['name' => 'View Driver', 'slug' => 'view_driver', 'group' => 'Driver'],
+            ['name' => 'Create Driver', 'slug' => 'create_driver', 'group' => 'Driver'],
+            ['name' => 'Edit Driver', 'slug' => 'edit_driver', 'group' => 'Driver'],
+            ['name' => 'Deactivate Driver', 'slug' => 'deactivate_driver', 'group' => 'Driver'],
+            ['name' => 'Assign Driver', 'slug' => 'assign_driver', 'group' => 'Driver'],
 
 
 
