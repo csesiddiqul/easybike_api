@@ -77,6 +77,14 @@ Route::middleware('auth:sanctum')->group(function () {
         'destroy' => 'permissions:delete_vehicle',
     ]);
 
+    Route::apiResource('owner-vehicles', VehicleController::class)->middleware([
+        'index' => 'permissions:view_owner_vehicle',
+        'show' => 'permissions:view_owner_vehicle',
+        'store' => 'permissions:create_owner_vehicle',
+        'update' => 'permissions:edit_owner_vehicle',
+        // 'destroy' => 'permissions:delete_owner_vehicle',
+    ]);
+
     Route::get('owner-select-options', [OwnerController::class, 'ownerSelectOptions']);
     Route::get('driver-select-options', [DriverController::class, 'driverSelectOptions']);
 
@@ -97,8 +105,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::post('drivers/{driver}/licence/payment', [DriverController::class, 'initiateLicencePayment'])->name('driver.licence.payment');
-
-
 });
 
 
@@ -117,6 +123,6 @@ Route::prefix("website-settings")->controller(WebsiteSettingController::class)->
 
 
 // Payment routes
-Route::post( 'payment/ssl/success',[PaymentController::class, 'sslSuccess'])->name('ssl.payment.success');
-Route::post('payment/ssl/fail',[PaymentController::class, 'sslFail'])->name('ssl.payment.fail');
-Route::post('payment/ssl/cancel',[PaymentController::class, 'sslCancel'])->name('ssl.payment.cancel');
+Route::post('payment/ssl/success', [PaymentController::class, 'sslSuccess'])->name('ssl.payment.success');
+Route::post('payment/ssl/fail', [PaymentController::class, 'sslFail'])->name('ssl.payment.fail');
+Route::post('payment/ssl/cancel', [PaymentController::class, 'sslCancel'])->name('ssl.payment.cancel');
