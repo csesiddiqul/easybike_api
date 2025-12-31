@@ -13,6 +13,35 @@ use App\Http\Requests\UpdateDriverRequest;
 
 class DriverController extends Controller
 {
+
+    public function driverSelectOptions()
+    {
+        try {
+            $drivers = Driver::with('user')
+                ->where('status', 'active')
+                ->orderBy('id', 'desc')
+                ->get();
+
+            $options = $drivers->map(function ($driver) {
+                return [
+                    'id' => $driver->user->id,
+                    'name' => $driver->user->name . ' (' . $driver->user->phone . ')',
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Driver select options retrieved successfully',
+                'data'    => $options,
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while retrieving Driver select options',
+                'error'   => $th->getMessage(),
+            ], 500);
+        }
+    }
     /**
      * Display a listing of the resource.
      */
