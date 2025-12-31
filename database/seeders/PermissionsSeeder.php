@@ -71,6 +71,9 @@ class PermissionsSeeder extends Seeder
             ['name' => 'Make Licence Payment', 'slug' => 'driver_self_make_payment', 'group' => 'Driver Self'],
 
             ['name' => 'Owner Vehicles', 'slug' => 'view_owner_vehicle', 'group' => 'Owner vehicle Management'],
+            ['name' => 'Create Owner Vehicle', 'slug' => 'create_owner_vehicle', 'group' => 'Owner vehicle Management'],
+            ['name' => 'Edit Owner Vehicle', 'slug' => 'edit_owner_vehicle', 'group' => 'Owner vehicle Management'],
+            ['name' => 'Delete Owner Vehicle', 'slug' => 'delete_owner_vehicle', 'group' => 'Owner vehicle Management'],
 
 
 
