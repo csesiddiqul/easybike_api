@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Driver;
 use App\Models\User;
+use App\Models\FiscalYear;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Models\DriverLicenceRegistration;
+use App\Models\Payment;
+use App\Services\SslCommerzService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\DriverResource;
@@ -13,6 +18,8 @@ use App\Http\Requests\UpdateDriverRequest;
 
 class DriverController extends Controller
 {
+<<<<<<< HEAD
+=======
 
     public function driverSelectOptions()
     {
@@ -45,9 +52,13 @@ class DriverController extends Controller
     /**
      * Display a listing of the resource.
      */
+>>>>>>> 6c449dcae3aaa494492bf7384e8d156a0148655f
     public function index()
     {
-        $drivers = Driver::with('user')
+        $drivers = Driver::with([
+                'user',
+                'latestLicence.fiscalYear'
+            ])
             ->latest()
             ->get();
 
@@ -56,6 +67,7 @@ class DriverController extends Controller
             'data'    => DriverResource::collection($drivers),
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -220,4 +232,98 @@ class DriverController extends Controller
 
         return 'DRV-' . $year . '-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ================ Payments And Licence ======================//
+
+    public function initiateLicencePayment(Driver $driver, SslCommerzService $ssl)
+    {
+        $fiscalYear = FiscalYear::where('is_active', true)->firstOrFail();
+
+        $licence = DriverLicenceRegistration::firstOrCreate(
+            [
+                'driver_id' => $driver->id,
+                'fiscal_year_id' => $fiscalYear->id,
+            ],
+            [
+                'start_date' => $fiscalYear->start_date,
+                'end_date'   => $fiscalYear->end_date,
+                'payment_status' => 'unpaid',
+            ]
+        );
+
+        if ($licence->payment_status === 'paid') {
+            return response()->json([
+                'message' => 'Licence already active'
+            ], 422);
+        }
+
+        $trxId = 'DL-' . strtoupper(Str::random(10));
+
+        $payment = Payment::updateOrCreate(
+            [
+                'type' => 'driver_licence',
+                'reference_id' => $licence->id,
+            ],
+            [
+                'user_id' => auth()->id(),
+                'fiscal_year_id' => $fiscalYear->id,
+                'amount' => config('fees.driver_licence'),
+                'trx_id' => $trxId,
+                'status' => 'pending',
+            ]
+        );
+
+        $sslResponse = $ssl->initiate([
+            'tran_id' => $trxId,
+            'total_amount' => $payment->amount,
+
+            'cus_name'  => auth()->user()->name,
+            'cus_phone' => auth()->user()->phone ?? '01700000000',
+            'cus_email' => auth()->user()->email ?? 'no@mail.com',
+        ]);
+
+        return response()->json([
+            'payment_url' => $sslResponse['GatewayPageURL'],
+        ]);
+    }
+
+
+    public function paymentSuccess(Request $request)
+    {
+        DB::transaction(function () use ($request) {
+
+            $payment = Payment::where('trx_id', $request->tran_id)
+                ->where('status', 'pending')
+                ->firstOrFail();
+
+            $payment->update([
+                'status'         => 'paid',
+                'payment_method' => 'sslcommerz',
+                'paid_at'        => now(),
+            ]);
+
+            if ($payment->type === 'driver_licence') {
+                DriverLicenceRegistration::where('id', $payment->reference_id)
+                    ->update([
+                        'payment_status' => 'paid',
+                        'approved_at'    => now(),
+                    ]);
+            }
+        });
+
+        return response()->json(['message' => 'Licence activated']);
+    }
+
 }

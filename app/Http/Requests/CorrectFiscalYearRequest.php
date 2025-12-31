@@ -57,7 +57,7 @@ class CorrectFiscalYearRequest extends FormRequest
             if ($this->fiscalYear->is_active) {
                 $validator->errors()->add(
                     'fiscal_year',
-                    'Active fiscal year cannot be corrected.'
+                    'Active fiscal year cannot be Updated.'
                 );
             }
         });

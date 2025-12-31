@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Driver extends Model
 {
+    protected $appends = ['computed_status'];
     protected $fillable = [
         'user_id',
         'registration_number',
@@ -31,6 +32,37 @@ class Driver extends Model
     {
         return $this->hasMany(DriverLicenceRegistration::class);
     }
+
+    
+
+    public function latestLicence()
+    {
+        return $this->hasOne(
+            DriverLicenceRegistration::class
+        )->latestOfMany();
+    }
+
+
+
+
+    public function getComputedStatusAttribute()
+    {
+        $licence = $this->latestLicence;
+
+        if (!$licence) {
+            return 'pending';
+        }
+
+        if (
+            $licence->payment_status === 'paid' &&
+            $licence->end_date >= now()
+        ) {
+            return 'active';
+        }
+
+        return 'expired';
+    }
+
 
     /* =====================
        Helper Method
