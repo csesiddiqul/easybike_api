@@ -61,7 +61,6 @@ class PermissionsSeeder extends Seeder
             ['name' => 'Delete vehicle', 'slug' => 'delete_vehicle', 'group' => 'vehicle Management'],
             ['name' => 'View vehicle', 'slug' => 'view_vehicle', 'group' => 'vehicle Management'],
 
-<<<<<<< HEAD
             // =====================
             // Driver Self Panel
             // =====================
@@ -71,9 +70,7 @@ class PermissionsSeeder extends Seeder
             ['name' => 'View Own Licence Renew History', 'slug' => 'driver_self_renew_history', 'group' => 'Driver Self'],
             ['name' => 'Make Licence Payment', 'slug' => 'driver_self_make_payment', 'group' => 'Driver Self'],
 
-=======
             ['name' => 'Owner Vehicles', 'slug' => 'view_owner_vehicle', 'group' => 'Owner vehicle Management'],
->>>>>>> 6c449dcae3aaa494492bf7384e8d156a0148655f
 
 
 
