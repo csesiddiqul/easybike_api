@@ -28,17 +28,17 @@ class StockController extends Controller
     public function index(Request $request)
     {
         try {
-            
+
             $startDate = $request->query('start_date') ?? Carbon::now()->format('Y-m-d');
             $endDate = $request->query('end_date');
             $status = $request->query('status');
-            
+
             // Define the default per_page value, with a fallback to 10
             $perPage = (int) $request->get('per_page', 10);
-    
+
             // Retrieve the search text if available
             $searchText = $request->get('searchText');
-            
+
 
             $data = Stock::query()
             ->active($status)
@@ -204,14 +204,14 @@ public function stockreport(Request $request)
             DB::beginTransaction();
             $validatedData = $request->validated();
             $stocked_by = auth()->user()->id;
-    
+
             // Create a new warehouse entry
             $warehouse = Warehouse::create([
                 'lot_memo_no' => $validatedData['lot_memo_no'],
                 'stocked_by' => $stocked_by,
                 'received_date' => $validatedData['received_date'],
             ]);
-    
+
             // Create a new stock entry and update the medicine quantity
             if(isset($validatedData['stocks']) && is_array($validatedData['stocks'])) {
                 foreach ($validatedData['stocks'] as $stockData) {
@@ -224,7 +224,7 @@ public function stockreport(Request $request)
                         'quantity' => $stockData['quantity'],
                         'expiry_date' => $stockData['expiry_date'],
                     ]);
-    
+
                     // Update the total quantity of the medicine
                     $medicine = Medicine::findOrFail($stockData['medicine_id']);
                     $medicine->total_quantity += $stockData['quantity'];
@@ -232,7 +232,7 @@ public function stockreport(Request $request)
                     $medicine->save();
                 }
             }
-    
+
             DB::commit();
             return $this->sendResponse('Stock created successfully');
         } catch (\Throwable $th) {
@@ -240,7 +240,7 @@ public function stockreport(Request $request)
             return $this->sendError("An error occurred while creating stock", $th->getMessage());
         }
     }
-    
+
 
     /**
      * Display the specified resource.

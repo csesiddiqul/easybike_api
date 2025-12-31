@@ -3,9 +3,11 @@
 use App\Http\Controllers\AlertMessageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FindAddressController;
+use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\StockController;
 
 
+use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\FiscalYearController;
 use App\Http\Controllers\DriverController;
@@ -56,6 +58,30 @@ Route::middleware('auth:sanctum')->group(function () {
     // stock
     Route::apiResource('stocks', StockController::class);
 
+    //Owner
+    // Route::apiResource('owners', OwnerController::class);
+    Route::apiResource('owners', OwnerController::class)->middleware([
+        'index' => 'permissions:view_owner',
+        'show' => 'permissions:view_owner',
+        'store' => 'permissions:create_owner',
+        'update' => 'permissions:edit_owner',
+        'destroy' => 'permissions:delete_owner',
+    ]);
+    //Vehicle
+
+    Route::apiResource('vehicles', VehicleController::class)->middleware([
+        'index' => 'permissions:view_vehicle',
+        'show' => 'permissions:view_vehicle',
+        'store' => 'permissions:create_vehicle',
+        'update' => 'permissions:edit_vehicle',
+        'destroy' => 'permissions:delete_vehicle',
+    ]);
+
+    Route::get('owner-select-options', [OwnerController::class, 'ownerSelectOptions']);
+    Route::get('driver-select-options', [DriverController::class, 'driverSelectOptions']);
+
+
+
     Route::post('stock-reports', [StockController::class, 'stockreport']);
 
     // alert messages
@@ -65,8 +91,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // =========== Apurbo Route ===========//
     Route::apiResource('fiscal-years', FiscalYearController::class)->only(['index', 'store', 'show']);
-    Route::patch('fiscal-years/{fiscalYear}/activate',[FiscalYearController::class, 'activate']);
-    Route::patch('fiscal-years/{fiscalYear}/correct',[FiscalYearController::class, 'correct']);
+    Route::patch('fiscal-years/{fiscalYear}/activate', [FiscalYearController::class, 'activate']);
+    Route::patch('fiscal-years/{fiscalYear}/correct', [FiscalYearController::class, 'correct']);
     Route::apiResource('drivers', DriverController::class);
 
 
