@@ -61,6 +61,7 @@ class PermissionsSeeder extends Seeder
             ['name' => 'Delete vehicle', 'slug' => 'delete_vehicle', 'group' => 'vehicle Management'],
             ['name' => 'View vehicle', 'slug' => 'view_vehicle', 'group' => 'vehicle Management'],
 
+            ['name' => 'Owner Vehicles', 'slug' => 'view_owner_vehicle', 'group' => 'Owner vehicle Management'],
 
 
 

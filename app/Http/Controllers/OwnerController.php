@@ -23,6 +23,37 @@ class OwnerController extends Controller
     }
 
     use HandleResponse;
+
+
+    public function ownerSelectOptions(Request $request)
+    {
+        try {
+            $searchText = $request->get('searchText');
+
+            $owners = Owner::with('user')
+                ->when($searchText, function ($query, $searchText) {
+                    $query->whereHas('user', function ($userQuery) use ($searchText) {
+                        $userQuery->where('name', 'like', "%{$searchText}%")
+                            ->orWhere('phone', 'like', "%{$searchText}%")
+                            ->orWhere('email', 'like', "%{$searchText}%");
+                    });
+                })
+                ->orderBy('id', 'desc')
+                ->get();
+
+            $options = $owners->map(function ($owner) {
+                return [
+                    'id' => $owner->id,
+                    'name' => $owner->user->name . ' (' . $owner->user->phone . ')',
+                ];
+            });
+
+            return $this->sendResponse('Owner select options retrieved successfully', $options);
+        } catch (\Throwable $th) {
+            return $this->sendError("An error occurred while retrieving Owner select options", $th->getMessage());
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
