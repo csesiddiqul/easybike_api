@@ -53,6 +53,15 @@ class PermissionsSeeder extends Seeder
             ['name' => 'Assign Driver', 'slug' => 'assign_driver', 'group' => 'Driver'],
 
 
+            // =====================
+            // Driver Self Panel
+            // =====================
+            ['name' => 'View Own Profile', 'slug' => 'driver_self_profile', 'group' => 'Driver Self'],
+            ['name' => 'View Own Licence', 'slug' => 'driver_self_licence', 'group' => 'Driver Self'],
+            ['name' => 'View Own Payment History', 'slug' => 'driver_self_payment_history', 'group' => 'Driver Self'],
+            ['name' => 'View Own Licence Renew History', 'slug' => 'driver_self_renew_history', 'group' => 'Driver Self'],
+            ['name' => 'Make Licence Payment', 'slug' => 'driver_self_make_payment', 'group' => 'Driver Self'],
+
 
 
 

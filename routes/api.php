@@ -4,9 +4,12 @@ use App\Http\Controllers\AlertMessageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FindAddressController;
 use App\Http\Controllers\StockController;
+
+
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\FiscalYearController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -67,6 +70,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('drivers', DriverController::class);
 
 
+    Route::post('drivers/{driver}/licence/payment', [DriverController::class, 'initiateLicencePayment'])->name('driver.licence.payment');
+
 
 });
 
@@ -81,3 +86,11 @@ Route::prefix("website-settings")->controller(WebsiteSettingController::class)->
     Route::get('/', 'index');
     Route::patch('/', 'storeOrUpdate');
 });
+
+
+
+
+// Payment routes
+Route::post( 'payment/ssl/success',[PaymentController::class, 'sslSuccess'])->name('ssl.payment.success');
+Route::post('payment/ssl/fail',[PaymentController::class, 'sslFail'])->name('ssl.payment.fail');
+Route::post('payment/ssl/cancel',[PaymentController::class, 'sslCancel'])->name('ssl.payment.cancel');
