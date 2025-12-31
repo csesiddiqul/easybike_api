@@ -18,8 +18,6 @@ use App\Http\Requests\UpdateDriverRequest;
 
 class DriverController extends Controller
 {
-<<<<<<< HEAD
-=======
 
     public function driverSelectOptions()
     {
@@ -52,7 +50,6 @@ class DriverController extends Controller
     /**
      * Display a listing of the resource.
      */
->>>>>>> 6c449dcae3aaa494492bf7384e8d156a0148655f
     public function index()
     {
         $drivers = Driver::with([
