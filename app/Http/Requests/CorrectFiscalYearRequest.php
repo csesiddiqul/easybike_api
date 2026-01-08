@@ -4,9 +4,12 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\FiscalYear;
+use App\Validation\FailedValidation;
 
 class CorrectFiscalYearRequest extends FormRequest
 {
+    use FailedValidation;
+    
     public function authorize(): bool
     {
         return auth()->check()
@@ -34,18 +37,21 @@ class CorrectFiscalYearRequest extends FormRequest
             $start = $this->start_date;
             $end   = $this->end_date;
 
-            // Must be 1 July – 30 June
             if (
                 date('m-d', strtotime($start)) !== '07-01' ||
                 date('m-d', strtotime($end)) !== '06-30'
             ) {
                 $validator->errors()->add(
                     'start_date',
-                    'Fiscal year must start on 1 July and end on 30 June.'
+                    'Fiscal year must start on 1 July.'
+                );
+
+                $validator->errors()->add(
+                    'end_date',
+                    'Fiscal year must end on 30 June.'
                 );
             }
 
-            // Must be exactly 1 year
             if (date('Y', strtotime($end)) - date('Y', strtotime($start)) !== 1) {
                 $validator->errors()->add(
                     'end_date',
@@ -53,11 +59,10 @@ class CorrectFiscalYearRequest extends FormRequest
                 );
             }
 
-            // Cannot correct active fiscal year
             if ($this->fiscalYear->is_active) {
                 $validator->errors()->add(
-                    'fiscal_year',
-                    'Active fiscal year cannot be Updated.'
+                    'name',
+                    'Active fiscal year cannot be updated.'
                 );
             }
         });

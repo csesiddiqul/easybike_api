@@ -27,5 +27,15 @@ class Payment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function licence()
+    {
+        return $this->belongsTo(
+            DriverLicenceRegistration::class,
+            'reference_id',
+            'id'
+        );
+    }
+
 }
 
