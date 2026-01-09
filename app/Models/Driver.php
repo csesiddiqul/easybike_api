@@ -33,7 +33,6 @@ class Driver extends Model
         return $this->hasMany(DriverLicenceRegistration::class);
     }
 
-    
 
     public function latestLicence()
     {
@@ -59,6 +58,21 @@ class Driver extends Model
         ) {
             return 'active';
         }
+
+        if (
+            $licence->payment_status === 'unpaid' &&
+            $licence->end_date >= now()
+        ) {
+            return 'pending';
+        }
+
+        if (
+            $licence->payment_status === 'unpaid' &&
+            $licence->end_date === null
+        ) {
+            return 'pending';
+        }
+
 
         return 'expired';
     }

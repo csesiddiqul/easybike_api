@@ -3,9 +3,11 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Validation\FailedValidation;
 
 class StoreDriverRequest extends FormRequest
 {
+    use FailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -44,15 +46,5 @@ class StoreDriverRequest extends FormRequest
         ];
     }
 
-    /**
-     * Custom error messages
-     */
-    public function messages(): array
-    {
-        return [
-            'phone.unique' => 'This phone number is already registered.',
-            'email.unique' => 'This email address is already in use.',
-            'nid.unique'   => 'This NID is already registered as a driver.',
-        ];
-    }
+ 
 }

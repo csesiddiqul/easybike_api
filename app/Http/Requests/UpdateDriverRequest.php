@@ -3,10 +3,12 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Validation\FailedValidation;
 use Illuminate\Validation\Rule;
 
 class UpdateDriverRequest extends FormRequest
 {
+    use FailedValidation;
     /**
      * Authorization
      */
@@ -65,15 +67,5 @@ class UpdateDriverRequest extends FormRequest
         ];
     }
 
-    /**
-     * Custom messages
-     */
-    public function messages(): array
-    {
-        return [
-            'phone.unique' => 'This phone number is already used by another driver.',
-            'email.unique' => 'This email is already used by another driver.',
-            'nid.unique'   => 'This NID is already registered.',
-        ];
-    }
+   
 }

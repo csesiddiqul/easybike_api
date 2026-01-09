@@ -38,12 +38,33 @@ class PaymentController extends Controller
 
     public function sslFail()
     {
-        return redirect('/payment-failed');
+        return redirect()->away(
+            config('app.frontend_url') . '/payment-failed'
+        );
     }
 
     public function sslCancel()
     {
-        return redirect('/payment-cancelled');
+        return redirect()->away(
+            config('app.frontend_url') . '/payment-cancel'
+        );
     }
+
+public function myPaymentHistory()
+{
+    $payments = Payment::with([
+            'licence.fiscalYear'
+        ])
+        ->where('user_id', auth()->id())
+        ->where('type', 'driver_licence')
+        ->latest()
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => $payments,
+    ]);
+}
+
 
 }
