@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\DriverResource;
 use App\Http\Requests\StoreDriverRequest;
 use App\Http\Requests\UpdateDriverRequest;
+use Illuminate\Http\Request;
 
 class DriverController extends Controller
 {
@@ -296,7 +297,7 @@ class DriverController extends Controller
         ]);
     }
 
-    
+
 
 
     public function paymentSuccess(Request $request)
