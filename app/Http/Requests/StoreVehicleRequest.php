@@ -37,7 +37,7 @@ class StoreVehicleRequest extends FormRequest
 
             // Driver (initial assignment)
             'driver_id' => [
-                'required',
+                'nullable',
                 function ($attribute, $value, $fail) {
                     // 1️⃣ Check in users table
                     $user = \App\Models\User::find($value);
