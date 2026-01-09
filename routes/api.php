@@ -5,7 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FindAddressController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\StockController;
-
+use App\Http\Controllers\AppSettingController;
 
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\WebsiteSettingController;
@@ -42,7 +42,6 @@ require __DIR__ . '/api/authorization.php';
 
 // Authenticate routes
 Route::middleware('auth:sanctum')->group(function () {
-
     // TODO: 1
     // address
     Route::controller(FindAddressController::class)->group(function () {
@@ -101,7 +100,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('fiscal-years', FiscalYearController::class)->only(['index', 'store', 'show']);
     Route::patch('fiscal-years/{fiscalYear}/activate', [FiscalYearController::class, 'activate']);
     Route::patch('fiscal-years/{fiscalYear}/correct', [FiscalYearController::class, 'correct']);
+
+    Route::get('drivers/me', [DriverController::class, 'getdriver']);
+    Route::get('drivers/me/licence-history', [DriverController::class, 'licenceHistory']);
     Route::apiResource('drivers', DriverController::class);
+    Route::get('payments/my-history', [PaymentController::class, 'myPaymentHistory']);
+
+ 
+    Route::post('system-settings', [AppSettingController::class, 'update']);
 
 
     Route::post('drivers/{driver}/licence/payment', [DriverController::class, 'initiateLicencePayment'])->name('driver.licence.payment');
@@ -119,7 +125,7 @@ Route::prefix("website-settings")->controller(WebsiteSettingController::class)->
     Route::patch('/', 'storeOrUpdate');
 });
 
-
+Route::get('system-settings', [AppSettingController::class, 'show']);
 
 
 // Payment routes

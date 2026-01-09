@@ -3,9 +3,11 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Validation\FailedValidation;
 
 class UpdateFiscalYearRequest extends FormRequest
 {
+    use FailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */
