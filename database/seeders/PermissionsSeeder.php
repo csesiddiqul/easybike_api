@@ -87,6 +87,9 @@ class PermissionsSeeder extends Seeder
             ['name' => 'View Website Setting', 'slug' => 'view_website_setting', 'group' => 'Website Setting'],
 
 
+            ['name' => 'Driver Renew Reports', 'slug' => 'driver_renew_reports', 'group' => 'Driver Reports'],
+            ['name' => 'Driver Payment Reports', 'slug' => 'driver_payment_reports', 'group' => 'Driver Reports'],
+
 
         ];
 

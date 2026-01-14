@@ -103,6 +103,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('fiscal-years/{fiscalYear}/activate', [FiscalYearController::class, 'activate']);
     Route::patch('fiscal-years/{fiscalYear}/correct', [FiscalYearController::class, 'correct']);
 
+
+    // 🔹 Admin Central Payment Report
+    Route::get('driver-payment-reports',[DriverController::class, 'driverPaymentReports']);
+    // 🔹 Admin Central Renew / Licence Report
+    Route::get('driver-renew-reports',[DriverController::class, 'driverRenewReports']);
+    
+
+
+    
     Route::get('drivers/me', [DriverController::class, 'getdriver']);
     Route::get('drivers/me/licence-history', [DriverController::class, 'licenceHistory']);
     Route::apiResource('drivers', DriverController::class);
