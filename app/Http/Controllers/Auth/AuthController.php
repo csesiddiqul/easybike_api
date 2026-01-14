@@ -22,7 +22,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-   
+
     public function register(UserRequest $request)
     {
         try {
@@ -41,7 +41,7 @@ class AuthController extends Controller
                     'name' => $user->name,
                     'link' => $clientDomainUrl . "verification-email" . "?token=" . $token,
                 ];
-            
+
                 Mail::to($user->email)->queue(new EmailVerificationMail($mailData));
 
                 $data['access_token'] =  $user->createToken("access_token")->plainTextToken;
@@ -72,28 +72,28 @@ class AuthController extends Controller
                         'name' => $user->name,
                         'link' => $clientDomainUrl. "verification-email". "?token=". $token,
                     ];
-                
+
                     Mail::to($user->email)->queue(new EmailVerificationMail($mailData));
-    
+
                     return Response::sendResponse("Email sent successfully");
                 }else{
                     return Response::sendError('Error', ['error'=>'User not found']);
                 }
-    
+
             } catch (\Exception $e) {
                 return Response::sendError('Error', $e->getMessage(), $e->getCode());
-        
+
             }
         }
-    
 
-    // Email verification  
+
+    // Email verification
     public function emailVerification(Request $request)
     {
         try {
             $token = $request->token;
             $user = User::where('remember_token', $token)->first();
-                
+
             if ($user) {
                 $user->remember_token = null;
                 $user->email_verified_at = now();
@@ -109,7 +109,7 @@ class AuthController extends Controller
         }
     }
 
-   
+
     /**
      * Login api
      *
@@ -123,20 +123,20 @@ class AuthController extends Controller
             'password' => 'required|min:6',
         ]);
         try {
-            $user = User::where('email', $request->email)->first();
+            $user = User::with('owner:id,user_id')->where('email', $request->email)->first();
             if (! $user || ! Hash::check($request->password, $user->password)) {
                 return Response::sendError('Invalid credentials.', ['error'=>'The provided credentials are incorrect']);
             }
             $data['access_token'] =  $user->createToken("access_token")->plainTextToken;
             $data['user'] =  $user;
-       
+
             return Response::sendResponse('User login successfully.', $data);
 
         } catch (\Exception $e) {
             return Response::sendError('Error', $e->getMessage(), $e->getCode());
         }
     }
-    
+
 
     // Logout user
     public function logout(Request $request)
@@ -144,10 +144,10 @@ class AuthController extends Controller
         try {
             // Retrieve the token ID from the request
             $tokenId = $request->user()->currentAccessToken()->id;
-            
+
             // Revoke the specific token
             $request->user()->tokens()->where('id', $tokenId)->delete();
-            
+
             // $user = $request->user();
             // $user->tokens()->delete(); // Invalidate all tokens associated with the user
             return Response::sendResponse("Successfully logged out");
@@ -156,7 +156,7 @@ class AuthController extends Controller
         }
     }
 
-    
+
     // User forgot password
     public function forgotPassword(Request $request)
     {
@@ -164,20 +164,20 @@ class AuthController extends Controller
             $request->validate([
                 'email' => 'required|email',
             ]);
-    
+
             $user = User::where('email', $request->email)->first();
-            
+
             if (!$user) {
                 return response()->json(['message' => 'User not found.'], 404);
             }
-    
+
             $token = Str::random(6);
-    
+
             // Check if a token already exists for the email
             $existingToken = DB::table('password_reset_tokens')
                 ->where('email', $request->email)
                 ->first();
-    
+
             if ($existingToken) {
                 // Update the existing token
                 DB::table('password_reset_tokens')
@@ -191,16 +191,16 @@ class AuthController extends Controller
                     'created_at' => now(),
                 ]);
             }
-    
+
             Mail::to($request->email)->send(new ForgotPasswordMail($token));
-    
+
             return response()->json(["status" => true, 'message' => 'Password reset email sent.']);
-    
+
         } catch (\Exception $e) {
             return response()->json(['message' => 'Password reset failed. ' . $e->getMessage()], 500);
         }
     }
-    
+
 
 
     // User reset password
@@ -211,31 +211,31 @@ class AuthController extends Controller
                 'otp' => 'required|string|min:6',
                 'password' => 'required|string|min:6',
             ]);
-    
+
             $resetToken = DB::table('password_reset_tokens')
                 ->where('token', $request->otp)
                 ->first();
-    
+
             if (!$resetToken) {
                 return response()->json(['message' => 'Invalid password reset token.'], 400);
             }
-    
+
             $user = User::where('email', $resetToken->email)->first();
-    
+
             if (!$user) {
                 return response()->json(['message' => 'User not found.'], 404);
             }
-    
+
             $user->password = Hash::make($request->password);
             $user->save();
-    
+
             // Delete the used token
             DB::table('password_reset_tokens')
                 ->where('token', $request->otp)
                 ->delete();
-    
+
             return response()->json(['message' => 'Password updated successfully.']);
-    
+
         } catch (\Exception $e) {
             return response()->json(['message' => 'Password update failed. ' . $e->getMessage()], 500);
         }
@@ -282,5 +282,5 @@ class AuthController extends Controller
     }
 
 
-    
+
 }

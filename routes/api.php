@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AlertMessageController;
+use App\Http\Controllers\API\VehiclePaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FindAddressController;
 use App\Http\Controllers\OwnerController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\FiscalYearController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\VehicleLicenseController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -106,7 +108,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('drivers', DriverController::class);
     Route::get('payments/my-history', [PaymentController::class, 'myPaymentHistory']);
 
- 
+
+    Route::apiResource('vehicle-licenses', VehicleLicenseController::class)->middleware([
+        'index' => 'permissions:view_vehicle_license',
+        'show' => 'permissions:view_vehicle_license',
+        'store' => 'permissions:create_vehicle_license',
+        'update' => 'permissions:edit_vehicle_license',
+        'destroy' => 'permissions:delete_vehicle_license',
+    ]);
+
+    Route::get('make-vehicle-license-payment', [VehicleLicenseController::class, 'makePayment']);
+
+    Route::get('vehicle-payments', [VehiclePaymentController::class, 'index']);
+    Route::post('vehicle-payments', [VehiclePaymentController::class, 'store']);
+
+
     Route::post('system-settings', [AppSettingController::class, 'update']);
 
 
@@ -132,3 +148,4 @@ Route::get('system-settings', [AppSettingController::class, 'show']);
 Route::post('payment/ssl/success', [PaymentController::class, 'sslSuccess'])->name('ssl.payment.success');
 Route::post('payment/ssl/fail', [PaymentController::class, 'sslFail'])->name('ssl.payment.fail');
 Route::post('payment/ssl/cancel', [PaymentController::class, 'sslCancel'])->name('ssl.payment.cancel');
+Route::post('vehicle-payments/{paymentId}/success', [VehiclePaymentController::class, 'success']);
