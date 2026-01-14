@@ -22,7 +22,7 @@ class VehicleResource extends JsonResource
             'registration_number' => $this->registration_number,
             'vehicle_model_name' => $this->vehicle_model_name,
             'chassis_number' => $this->chassis_number,
-            'status' => $this->status,
+            'status' => $this->activeLicense ? $this->activeLicense->status ?? $this->activeLicense->status : 'expired',
             'current_driver' => $this->currentDriver ? [
                 'id' => $this->currentDriver->id,
                 'vehicle_id' => $this->currentDriver->vehicle_id,
@@ -48,6 +48,18 @@ class VehicleResource extends JsonResource
                 'user_name' => $this->owner->user->user_name,
                 'role_id' => $this->owner->user->role_id,
                 'status' => $this->owner->user->status,
+            ] : null,
+
+            'active_license' => $this->activeLicense ? [
+                'id' => $this->activeLicense->id,
+                'owner_id' => $this->activeLicense->owner_id,
+                'vehicle_id' => $this->activeLicense->vehicle_id,
+                'fiscal_year_id' => $this->activeLicense->fiscal_year_id,
+                'licence_fee' => $this->activeLicense->licence_fee,
+                'status' => $this->activeLicense->status ?? 'pending', // default value
+                'payment_status' => $this->activeLicense->payment_status,
+                'activated_at' => $this->activeLicense->activated_at,
+                'expired_at' => $this->activeLicense->expired_at,
             ] : null,
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),

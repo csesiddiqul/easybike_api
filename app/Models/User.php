@@ -94,4 +94,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(Driver::class);
     }
+    public function warehouses()
+    {
+        return $this->hasMany(Warehouse::class, 'stocked_by');
+    }
+    public function owner()
+    {
+        return $this->hasOne(Owner::class);
+    }
 }

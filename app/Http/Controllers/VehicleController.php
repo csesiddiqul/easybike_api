@@ -6,7 +6,9 @@ use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
 use App\Http\Requests\StoreVehicleRequest;
 use App\Http\Requests\UpdateVehicleRequest;
+use App\Models\FiscalYear;
 use App\Models\VehicleDriverAssignment;
+use App\Models\VehicleLicense;
 use App\Traits\HandleResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,9 +24,11 @@ class VehicleController extends Controller
         try {
             $perPage       = $request->get('per_page', 10);
             $searchText    = $request->get('searchText');
-            $ownerUserId   = $request->get('owner_user_id'); // নতুন filter
+            $ownerUserId   = $request->get('owner_user_id');
+
 
             $data = Vehicle::with([
+                'activeLicense',
                 'owner',
                 'owner.user',
                 'currentDriver.driver:id,name,email,phone,user_name,role_id,status',
@@ -103,6 +107,16 @@ class VehicleController extends Controller
                     'start_date' => now(),
                     'status' => 'active',
                 ]);
+
+                VehicleLicense::create([
+                    'owner_id'       => $request->owner_id,
+                    'vehicle_id'     => $vehicle->id,
+                    'fiscal_year_id' => FiscalYear::getActiveFiscalYear()?->id,
+                    'licence_fee'    => $request->licence_fee ?? '400.00',
+                    'status'         => 'pending',
+                    'payment_status' => 'unpaid',
+                ]);
+
                 return $vehicle;
             });
 

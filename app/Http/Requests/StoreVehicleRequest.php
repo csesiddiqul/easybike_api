@@ -44,16 +44,16 @@ class StoreVehicleRequest extends FormRequest
                     if (! $user) {
                         return $fail('The selected user does not exist.');
                     }
-                    if ($user->status !== 'Active') {
-                        return $fail('The user account is not active.');
-                    }
+                    // if ($user->status !== 'Active') {
+                    //     return $fail('The user account is not active.');
+                    // }
 
                     // 2️⃣ Check in drivers table
                     $driver = \App\Models\Driver::where('user_id', $value)->first();
                     if (! $driver) {
                         return $fail('The selected driver record does not exist.');
                     }
-                    if ($driver->status !== 'active') {
+                    if ($driver->computed_status !== 'active') {
                         return $fail('The driver is not active.');
                     }
 

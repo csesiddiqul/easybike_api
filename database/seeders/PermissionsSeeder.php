@@ -75,11 +75,12 @@ class PermissionsSeeder extends Seeder
             ['name' => 'Edit Owner Vehicle', 'slug' => 'edit_owner_vehicle', 'group' => 'Owner vehicle Management'],
             ['name' => 'Delete Owner Vehicle', 'slug' => 'delete_owner_vehicle', 'group' => 'Owner vehicle Management'],
 
+            ['name' => 'Vehicle License', 'slug' => 'view_vehicle_license', 'group' => 'vehicle License  Management'],
+            ['name' => 'Create Vehicle License ', 'slug' => 'create_vehicle_license', 'group' => 'vehicle License  Management'],
+            ['name' => 'Edit Vehicle License ', 'slug' => 'edit_vehicle_license', 'group' => 'vehicle License  Management'],
+            ['name' => 'Delete Vehicle License ', 'slug' => 'delete_vehicle_license', 'group' => 'vehicle License  Management'],
 
-
-
-
-
+            
 
 
             // website setting

@@ -30,15 +30,19 @@ class UpdateVehicleRequest extends FormRequest
             'vehicle_model_name' => 'required|string|max:100',
             'chassis_number' => 'required|string|max:100|unique:vehicles,chassis_number,' . $this->vehicle->id,
             'driver_id' => [
-                'required',
+                'nullable',
                 function ($attribute, $value, $fail) {
-                    $user = \App\Models\User::find($value);
+                    $user = \App\Models\User::with('driver')->find($value);
                     if (!$user) return $fail('The selected user does not exist.');
-                    if ($user->status !== 'Active') return $fail('The user account is not active.');
+                    // if ($user->status !== 'active') return $fail('The user account is not active.');
 
                     $driver = \App\Models\Driver::where('user_id', $value)->first();
                     if (!$driver) return $fail('The selected driver record does not exist.');
-                    if ($driver->status !== 'active') return $fail('The driver is not active.');
+                    // if ($driver->getComputedStatusAttribute() !== 'active') return $fail('The driver is not active.');
+                    if ($driver->computed_status !== 'active') {
+                        return $fail('The driver is not active.');
+                    }
+
 
                     $activeAssignment = \App\Models\VehicleDriverAssignment::where('driver_id', $value)
                         ->where('status', 'active')

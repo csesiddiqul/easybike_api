@@ -44,4 +44,8 @@ class FiscalYear extends Model
         return false;
     }
 
+    public static function getActiveFiscalYear(): ?self
+    {
+        return self::where('is_active', true)->first();
+    }
 }

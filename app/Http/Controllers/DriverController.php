@@ -24,7 +24,7 @@ class DriverController extends Controller
     {
         try {
             $drivers = Driver::with('user')
-                ->where('status', 'active')
+                // ->where('status', 'active')
                 ->orderBy('id', 'desc')
                 ->get();
 
@@ -121,56 +121,13 @@ class DriverController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->sendError("Driver creation failed", $th->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Driver creation failed',
+                'error'   => $e->getMessage(),
+            ], 500);
         }
-
-      
     }
-
-
-    public function getdrivers()
-    {
-        return $driver = Driver::with(['user', 'latestLicence','latestLicence.fiscalYear'])
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
-
-        return response()->json([
-            'success' => true,
-            'data'    => new DriverResource($driver),
-        ]);
-    }
-
-
-    public function licenceHistory()
-    {
-        $userId = auth()->id();
-
-        $driver = Driver::where('user_id', $userId)->firstOrFail();
-        $licences = DriverLicenceRegistration::with('fiscalYear')
-            ->where('driver_id', $driver->id)
-            ->orderByDesc('created_at')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $licences,
-        ]);
-    }
-
-
-    public function getdriver()
-    {
-        $driver = Driver::with(['user', 'latestLicence', 'latestLicence.fiscalYear'])
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
-
-        return response()->json([
-            'success' => true,
-            'data'    => new DriverResource($driver),
-        ]);
-    }
-
-
 
     /**
      * Display the specified resource.
@@ -230,8 +187,12 @@ class DriverController extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
-            return $this->sendError("Driver update failed", $th->getMessage());
-           
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Driver update failed',
+                'error'   => $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -306,7 +267,7 @@ class DriverController extends Controller
             ], 422);
         }
 
-        $trxId = 'DL-' . strtoupper(Str::random(10));
+        $trxId = 'DL-' . strtoupper(string: Str::random(10));
 
         $payment = Payment::updateOrCreate(
             [
@@ -314,7 +275,7 @@ class DriverController extends Controller
                 'reference_id' => $licence->id,
             ],
             [
-                'user_id' => $licence->driver_id,
+                'user_id' => auth()->id(),
                 'fiscal_year_id' => $fiscalYear->id,
                 'amount' => config('fees.driver_licence'),
                 'trx_id' => $trxId,
@@ -342,8 +303,7 @@ class DriverController extends Controller
     public function paymentSuccess(Request $request)
     {
         DB::transaction(function () use ($request) {
-            $fiscalYear = FiscalYear::where('is_active', true)->firstOrFail();
-            
+
             $payment = Payment::where('trx_id', $request->tran_id)
                 ->where('status', 'pending')
                 ->firstOrFail();

@@ -27,4 +27,15 @@ class Vehicle extends Model
         $lastId = self::max('id') ?? 0;
         return 'AUTO-' . str_pad($lastId + 1, 6, '0', STR_PAD_LEFT);
     }
+
+    public function licenses()
+    {
+        return $this->hasMany(VehicleLicense::class);
+    }
+    public function activeLicense()
+    {
+        return $this->hasOne(VehicleLicense::class)
+            ->where('fiscal_year_id', FiscalYear::getActiveFiscalYear()?->id)
+            ->where('status', 'active');
+    }
 }
