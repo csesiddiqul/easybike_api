@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\DriverResource;
 use App\Http\Requests\StoreDriverRequest;
 use App\Http\Requests\UpdateDriverRequest;
+use Illuminate\Http\Request;
 
 class DriverController extends Controller
 {
@@ -362,5 +363,93 @@ class DriverController extends Controller
 
         return response()->json(['message' => 'Licence activated']);
     }
+
+
+    public function driverPaymentReports(Request $request)
+    {
+        $query = Payment::with([
+            'user',
+            'licence.fiscalYear'
+        ])->where('type', 'driver_licence');
+
+        /* ================= DATE RANGE ================= */
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereBetween('paid_at', [
+                Carbon::parse($request->from_date)->startOfDay(),
+                Carbon::parse($request->to_date)->endOfDay(),
+            ]);
+        }
+
+        /* ================= PAYMENT TYPE ================= */
+        if ($request->filled('payment_type')) {
+            $query->where('status', $request->payment_type);
+        }
+
+        /* ================= FISCAL YEAR ================= */
+        if ($request->filled('fiscal_year_id')) {
+            $query->where('fiscal_year_id', $request->fiscal_year_id);
+        }
+
+        /* ================= SEARCH ================= */
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('trx_id', 'like', "%{$request->search}%")
+                ->orWhereHas('user', function ($u) use ($request) {
+                    $u->where('name', 'like', "%{$request->search}%");
+                });
+            });
+        }
+
+        $data = $query
+            ->latest('paid_at')
+            ->paginate($request->perPage ?? 10);
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
+
+public function driverRenewReports(Request $request)
+{
+    $query = DriverLicenceRegistration::query()
+        ->with([
+            'driver.user',
+            'fiscalYear'
+        ]);
+
+    /* ================= DATE RANGE ================= */
+    if ($request->filled('from_date') && $request->filled('to_date')) {
+        $query->whereBetween('created_at', [
+            Carbon::parse($request->from_date)->startOfDay(),
+            Carbon::parse($request->to_date)->endOfDay(),
+        ]);
+    }
+
+    /* ================= STATUS ================= */
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    /* ================= PAYMENT ================= */
+    if ($request->filled('payment_type')) {
+        $query->where('payment_status', $request->payment_type);
+    }
+
+    /* ================= FISCAL YEAR ================= */
+    if ($request->filled('fiscal_year_id')) {
+        $query->where('fiscal_year_id', $request->fiscal_year_id);
+    }
+
+    $data = $query
+        ->latest()
+        ->paginate($request->perPage ?? 10);
+
+    return response()->json([
+        'success' => true,
+        'data' => $data
+    ]);
+}
 
 }
